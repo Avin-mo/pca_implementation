@@ -1,0 +1,59 @@
+from sklearn.decomposition import PCA
+from sklearn.preprocessing import StandardScaler
+from sklearn.datasets import load_iris
+import matplotlib.pyplot as plt
+import pandas as pd
+import numpy as np
+
+
+# LOAD DATA:
+iris = load_iris()
+x = iris.data       # array of all data points
+y = iris.target     # array of all species target numbers
+
+
+df = pd.DataFrame(x, columns=iris.feature_names)
+df['species'] = pd.Categorical.from_codes(y, iris.target_names)
+    # reshape the data
+
+print(df.head())
+print(df.describe())
+
+# SCALE AND CENTER DATA:
+scaled_data = StandardScaler().fit_transform(x)
+
+# PCA STEPS:
+pca = PCA()
+pca.fit(scaled_data)
+pca_data = pca.transform(scaled_data)
+
+# SCREE PLOT
+var_per = pca.explained_variance_ratio_
+cum_var_per = var_per.cumsum()
+labels = ["PC" + str(i) for i in range(1,5)]
+plt.bar(x=range(1,5), height=cum_var_per ,tick_label=labels)
+plt.xlabel('Principal Component')
+plt.ylabel('Variance') 
+plt.title('Scree Plot')
+plt.show()
+
+    # we decide on k=2
+
+# APPLY PCA WITH 2 COMPONENTS
+pca = PCA(n_components=2)
+new_pca = pca.fit_transform(scaled_data)
+
+# DRAW THE PCA PLOT
+plt.scatter(new_pca[:,0], new_pca[:, 1], c=y, cmap='viridis')
+plt.title('PCA Plot')
+plt.xlabel(f"PC1 ({(var_per[0]*100):.2f}% variance)")
+plt.ylabel(f"PC2 ({(var_per[1]*100):.2f}% variance)")
+plt.show()
+
+# Each PC is a linear combination of the original features
+loadings = pd.DataFrame(
+    pca.components_.T,
+    index=iris.feature_names,
+    columns=['PC1', 'PC2']
+)
+print(loadings.round(3))
