@@ -4,8 +4,6 @@ from sklearn.datasets import load_iris
 import matplotlib.pyplot as plt
 import pandas as pd
 
-
-
 # LOAD DATA:
 iris = load_iris()
 x = iris.data       # array of all data points
