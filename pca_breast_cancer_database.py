@@ -40,4 +40,3 @@ pca = PCA(n_components=7)
 new_pca = pca.fit_transform(scaled_data)
 
 # NEW PCA PLOT
-plt.scatter()
